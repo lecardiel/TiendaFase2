@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de Platillos</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Página principal -->
+    <div v-if="!isDetailPage">
+      <header>
+        <h1>🍴 Cardimac</h1>
+        <p>Difruta de platillos internacionales y agrégalos a tu lista.</p>
+      </header>
+
+      <section class="filters">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="🔍 Buscar por nombre..."
+        />
+        <select v-model="selectedCategory">
+          <option value="">🌐 Todas las categorías</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
+      </section>
+
+      <section class="progress-bar">
+        <div class="bar" :style="{ width: progressPercentage + '%' }"></div>
+        <p>{{ selectedMeals.length }} platillos seleccionados</p>
+      </section>
+
+      <section class="meal-grid">
+        <div v-for="meal in filteredMeals" :key="meal.idMeal" class="meal-card">
+          <img :src="meal.strMealThumb" alt="Imagen del platillo" @click="viewDetails(meal)" />
+          <h3>{{ meal.strMeal }}</h3>
+          <p class="category">Categoría: {{ meal.strCategory }}</p>
+          <button class="add-btn" @click="addMeal(meal)">Agregar a la lista</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Detalle del platillo -->
+    <div v-if="isDetailPage">
+      <div class="breadcrumb">
+        <a href="#" @click.prevent="goBack">Inicio</a> > {{ currentMeal?.strMeal }}
+      </div>
+      <section class="meal-detail">
+        <img :src="currentMeal.strMealThumb" alt="Imagen del platillo" />
+        <h2>{{ currentMeal.strMeal }}</h2>
+        <p>Categoría: {{ currentMeal.strCategory }}</p>
+        <p>{{ currentMeal.strInstructions }}</p>
+
+        <div class="quantity-section">
+          <button class="quantity-btn" @click="decrementQuantity" :disabled="quantity <= 1">-</button>
+          <span class="quantity-display">{{ quantity }}</span>
+          <button class="quantity-btn" @click="incrementQuantity" :disabled="quantity >= 6">+</button>
+        </div>
+        <button class="add-btn">Agregar</button>
+      </section>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
